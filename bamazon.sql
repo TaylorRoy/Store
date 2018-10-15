@@ -22,4 +22,5 @@ PRIMARY KEY(department_id)
 INSERT INTO products (product_name, price, stock_quantity)
 VALUES ("jeans", "50", "10"), ("shorts", "30", "10"), ("t-shirt", "15", "10"), ("button-up shirt", "30", "10"), ("flannel shirt", "40", "10"), ("flip flops", "20", "10"), ("shoes", "60", "10"), ("trucker hat", "20", "10");
 
-INSERT INTO departments()
+INSERT INTO departments (department_name, over_head_costs)
+VALUES ("clothes", "3000");

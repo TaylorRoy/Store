@@ -1,28 +1,3 @@
-// var mysql = require("mysql");
-// var inquire = require("inquirer");
-
-// var connection = mysql.createConnection({
-//     host: "localhost",
-//     port:3306,
-//     password: "password",
-//     database: "bamazon"
-// });
-
-// connection.connect(function(error) {
-//     if (error) {
-//         console.log(error);
-//     }
-//     console.log("connected as id " + connection.threadId);
-//     displayStore();
-//     start();
-// })
-
-// function displayStore() {
-
-// };
-
-
-
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 
@@ -30,13 +5,10 @@ var inquirer = require("inquirer");
 var connection = mysql.createConnection({
     host: "localhost",
 
-    // Your port; if not 3306
     port: 3306,
 
-    // Your username
     user: "root",
 
-    // Your password
     password: "password",
     database: "bamazon"
 });
@@ -52,38 +24,39 @@ connection.connect(function (error) {
     if (nodeArray[2] === "view-products-for-sale") {
         console.log("view products for sale");
         displayStore();
-       }
-       
+    }
+
     if (nodeArray[2] === "view-low-inventory") {
         console.log("view low inventory");
         lowInventory();
-       }
+    }
 
     if (nodeArray[2] === "add-to-inventory") {
         console.log("add-to-inventory");
+        addToInventory();
     }
-    
+
     if (nodeArray[2] === "add-new-product") {
         console.log("add-new-product");
     }
-    else {
+    if (nodeArray === null) {
         // displayStore();
-        // start();
+        start();
     }
 });
 
 function displayStore() {
     console.log("Welcome to Bamazon!");
     console.log("Here is a list of what we have in stock.");
-    connection.query("SELECT * FROM products", function(error, results){
-    if (error) throw error;
-    console.log("product name|     price    |    quantity    |");
-    console.log("---------------------------------------------");
+    connection.query("SELECT * FROM products", function (error, results) {
+        if (error) throw error;
+        console.log("product name|     price    |    quantity    |");
+        console.log("---------------------------------------------");
 
-    for (i=0; i<results.length; i++){
-        console.log("|" + results[i].product_name + "     |     $" + results[i].price + "   |   " + results[i].stock_quantity + "|");
-    }
-    connection.end()
+        for (i = 0; i < results.length; i++) {
+            console.log("|" + results[i].product_name + "     |     $" + results[i].price + "   |   " + results[i].stock_quantity + "|");
+        }
+        connection.end()
     })
 };
 
@@ -125,7 +98,7 @@ function howManyPants() {
                     console.log("we don't have that many pants in stock.");
                 }
                 else {
-                    newStockQuantity = (results[0].stock_quantity - answer.numberPants)
+                    var newStockQuantity = (results[0].stock_quantity - answer.numberPants)
                     console.log(newStockQuantity);
                     connection.query(
                         "UPDATE products SET ? WHERE ?",
@@ -140,7 +113,7 @@ function howManyPants() {
                         function (error) {
                             if (error) throw err;
                             console.log("database was updated!");
-                            connection.query("SELECT price FROM products", function(error, results){
+                            connection.query("SELECT price FROM products", function (error, results) {
                                 if (error) throw error;
                                 console.log(results[0].price);
                                 console.log(answer.numberPants);
@@ -158,11 +131,11 @@ function howManyPants() {
 }
 
 function lowInventory() {
-    connection.query("SELECT * FROM products", function(error, results){
+    connection.query("SELECT * FROM products", function (error, results) {
         if (error) throw error;
         var lowInventoryArray = [];
-        for (i=0; i < results.length; i++) {
-            if (results[i].stock_quantity < 5){
+        for (i = 0; i < results.length; i++) {
+            if (results[i].stock_quantity < 5) {
                 lowInventoryArray.push(results[i])
             }
         }
@@ -175,21 +148,41 @@ function addToInventory() {
     inquirer.prompt([
         {
             name: "name",
-            type: "input",
-            message: "What product would you like to add more inventory to?"
+            type: "rawlist",
+            message: "What is the ID of the product would you like to add more inventory to?",
+            choices: ["1", "2.Shorts", "3. T-Shirts", "4. Button-Up Shirt"]
         },
         {
-           name:"amount",
-           type:"input",
-           message:"How many would you like to add?" 
+            name: "amount",
+            type: "input",
+            message: "How many would you like to add?",
         }
-    ])
-    .then(function(answer){
-        connection.query("INPUT INTO products SET ?", function(error, results){
-            if (error) throw error;
-            
-        })
-
+    ]).then(function (answer) {
+        console.log(answer.name);
+        console.log(answer.amount);
+        connection.query(
+            "UPDATE products SET ? WHERE ?",
+            [
+                {
+                    stock_quantity: (stock_quantity + answer.amount)
+                },
+                {
+                    item_id: answer.name
+                }
+            ],
+            function (error) {
+                if (error) throw error;
+                console.log("database was updated!");
+                connection.query("SELECT price FROM products", function (error, results) {
+                    if (error) throw error;
+                    console.log(results[0].price);
+                    console.log(answer.numberPants);
+                    var total = (results[0].price * answer.numberPants)
+                    console.log("Your total is $" + total);
+                    connection.end();
+                })
+            }
+        )
     })
 }
 
