@@ -147,10 +147,10 @@ function lowInventory() {
 function addToInventory() {
     inquirer.prompt([
         {
-            name: "name",
+            name: "id",
             type: "rawlist",
-            message: "What is the ID of the product would you like to add more inventory to?",
-            choices: ["1", "2.Shorts", "3. T-Shirts", "4. Button-Up Shirt"]
+            message: "What is the ID of the product would you like to add more inventory to? 1 for pants, 2 for shorts, 3 for T-SHirt, 4 for Button-Up Shirts",
+            choices: ["1", "2", "3", "4"]
         },
         {
             name: "amount",
@@ -158,31 +158,31 @@ function addToInventory() {
             message: "How many would you like to add?",
         }
     ]).then(function (answer) {
-        console.log(answer.name);
-        console.log(answer.amount);
         connection.query(
-            "UPDATE products SET ? WHERE ?",
-            [
-                {
-                    stock_quantity: (stock_quantity + answer.amount)
-                },
-                {
-                    item_id: answer.name
-                }
-            ],
-            function (error) {
+            "SELECT * FROM products", function (error, results) {
                 if (error) throw error;
-                console.log("database was updated!");
-                connection.query("SELECT price FROM products", function (error, results) {
-                    if (error) throw error;
-                    console.log(results[0].price);
-                    console.log(answer.numberPants);
-                    var total = (results[0].price * answer.numberPants)
-                    console.log("Your total is $" + total);
-                    connection.end();
-                })
+                console.log(results)
+                console.log("product_name: " + results[(answer.id -1)].product_name);
+                var addStock = (parseInt(results[(answer.id - 1)].stock_quantity) + parseInt(answer.amount))
+                connection.query(
+                    "UPDATE products SET ? WHERE ?",
+                    [
+                        {
+                            stock_quantity: addStock
+                        },
+                        {
+                            item_id: answer.id
+                        }
+                    ],
+                    function (error) {
+                        if (error) throw error;
+                        console.log("UPDATE: " + results[(answer.id - 1)].product_name +  " with ID:" + answer.id + " now has a stock quantity of " + addStock + ".");
+                        connection.end();
+                    })
             }
         )
-    })
+
+    }
+    )
 }
 
