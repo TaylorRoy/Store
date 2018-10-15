@@ -1,0 +1,25 @@
+{
+  "name": "Store",
+  "version": "1.0.0",
+  "description": "An amazon-like app that takes orders from users and keeps track of inventory.  Uses HTML, CSS, Bootstrap, JavaScript, jQuery and MySQL.",
+  "main": "store.js",
+  "dependencies": {
+    "inquirer": "^6.2.0",
+    "mysql": "^2.16.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TaylorRoy/Store.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TaylorRoy/Store/issues"
+  },
+  "homepage": "https://github.com/TaylorRoy/Store#readme"
+}
