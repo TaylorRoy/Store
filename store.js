@@ -46,6 +46,7 @@ connection.connect(function (error) {
 });
 
 function displayStore() {
+    var MAX_PRODUCT_NAME_LENGTH = 30;
     console.log("Welcome to Bamazon!");
     console.log("Here is a list of what we have in stock.");
     connection.query("SELECT * FROM products", function (error, results) {
@@ -54,7 +55,21 @@ function displayStore() {
         console.log("---------------------------------------------");
 
         for (i = 0; i < results.length; i++) {
-            console.log("|" + results[i].product_name + "     |     $" + results[i].price + "   |   " + results[i].stock_quantity + "|");
+            let product = results[i];
+            let length = product.product_name.length;
+            let displayName = '';// = results[i].product_name;
+            if (length > MAX_PRODUCT_NAME_LENGTH) {
+                displayName = product.product_name.slice(0, MAX_PRODUCT_NAME_LENGTH - 3);
+                displayName += '...';
+            } else if (length <= MAX_PRODUCT_NAME_LENGTH) {
+                let emptySpaces = '';
+                for (let j = 0; j < MAX_PRODUCT_NAME_LENGTH - length; j++) {
+                    emptySpaces += " ";
+                }
+                displayName = product.product_name;
+                displayName += emptySpaces;
+            }
+            console.log(displayName + " | $" + results[i].price + " | " + results[i].stock_quantity);
         }
         connection.end()
     })
@@ -162,7 +177,7 @@ function addToInventory() {
             "SELECT * FROM products", function (error, results) {
                 if (error) throw error;
                 console.log(results)
-                console.log("product_name: " + results[(answer.id -1)].product_name);
+                console.log("product_name: " + results[(answer.id - 1)].product_name);
                 var addStock = (parseInt(results[(answer.id - 1)].stock_quantity) + parseInt(answer.amount))
                 connection.query(
                     "UPDATE products SET ? WHERE ?",
@@ -176,7 +191,7 @@ function addToInventory() {
                     ],
                     function (error) {
                         if (error) throw error;
-                        console.log("UPDATE: " + results[(answer.id - 1)].product_name +  " with ID:" + answer.id + " now has a stock quantity of " + addStock + ".");
+                        console.log("UPDATE: " + results[(answer.id - 1)].product_name + " with ID:" + answer.id + " now has a stock quantity of " + addStock + ".");
                         connection.end();
                     })
             }
@@ -184,5 +199,8 @@ function addToInventory() {
 
     }
     )
+}
+function addNewProduct() {
+    
 }
 
