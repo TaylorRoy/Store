@@ -40,10 +40,7 @@ connection.connect(function (error) {
         console.log("add-new-product");
         addNewProduct();
     }
-    // if (nodeArray[2]==="null") {
-    //     displayStore();
-    //     start();
-    // }
+
     else {
         displayStore();
         start();
@@ -80,12 +77,14 @@ function displayStore() {
     })
 };
 
+var optionsArray = ["1.Jeans", "2.Shorts", "3.T-Shirts", "4.Button-Up Shirt", "5.Flannel Shirt", "6.Flip Flops", "7.Shoes", "8.Trucker Hat", "9.Radio"];
+
 function start() {
     inquirer.prompt({
         name: "buy",
         type: "list",
         message: "What is the ID of the item you would like to buy?",
-        choices: ["1.Jeans", "2.Shorts", "3.T-Shirts", "4.Button-Up Shirt", "5.Flannel Shirt", "6.Flip Flops", "7.Shoes", "8.Trucker Hat", "9.Radio"]
+        choices: optionsArray
     }).then(function (answer) {
         if (answer.buy === "1.Jeans") {
             item = "jeans";
@@ -240,7 +239,7 @@ function addToInventory() {
             name: "id",
             type: "list",
             message: "What is the ID of the product would you like to add more inventory to?",
-            choices: ["1.Jeans", "2.Shorts", "3.T-Shirts", "4.Button-Up Shirt", "5.Flannel Shirt", "6.Flip Flops", "7.Shoes", "8.Trucker Hat", "9.Radio"]
+            choices: optionsArray
         },
         {
             name: "amount",
@@ -298,7 +297,7 @@ function addNewProduct() {
             type: "input",
             message: "How much per does the new product cost?"
         }
-    ]).then(function (answer) {
+    ]).then(function (answer) { 
         connection.query("INSERT INTO products SET ?",
             {
                 product_name: answer.newItem,
